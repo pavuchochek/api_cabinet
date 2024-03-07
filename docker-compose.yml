@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+    web:
+        build: ./
+        ports:
+            - "80:80"
+        volumes:
+            - ./v1:/app/api/v1/
+            - ./v2:/app/api/v2/
+            - .env:/app/.env
+
+    db:
+        image: mariadb
+        container_name: db_project
+        #restart: always
+        volumes:
+          - ./bd/initBd.sql:/docker-entrypoint-initdb.d/init.sql
+        env_file:
+            - .env.db
+        ports:
+            - "3306:3306"
+    db_auth:
+        image: mariadb
+        container_name: db_project_auth
+        #restart: always
+        volumes:
+          - ./bd/auth.sql:/docker-entrypoint-initdb.d/init.sql
+        env_file:
+            - .env.db
+        ports:
+            - "3307:3306"
+
+    adminer:
+        image: adminer
+        #restart: always
+        ports:
+            - "8080:8080"

@@ -35,3 +35,15 @@ CREATE TABLE consultation(
    CONSTRAINT FK_consultation_medecin FOREIGN KEY(id_medecin) REFERENCES medecin(id_medecin),
    CONSTRAINT FK_consultation_usager FOREIGN KEY(id_usager) REFERENCES usager(id_usager)
 );
+
+INSERT INTO medecin (civilite, nom, prenom) VALUES
+('M.', 'Dupont', 'Jean'),
+('Mme', 'Martin', 'Marie'),
+('Mme', 'Lefevre', 'Sophie'),
+('M.', 'Dubois', 'Pierre'),
+('Mme', 'Moreau', 'Claire'),
+('M.', 'Garcia', 'Luc'),
+('Mme', 'Roux', 'Emma'),
+('M.', 'Fournier', 'Thomas'),
+('Mme', 'Vincent', 'Camille'),
+('Mme', 'Leroy', 'Julie');
