@@ -8,8 +8,8 @@ class Connexion{
     private function __construct () {
         try {
             $base_url = "mysql:host=%s;dbname=%s;charset=utf8";
-            $url = sprintf($base_url, 'db_project', 'chunks_api');
-            $this->_pdo = new PDO($url, 'test', 'test');
+            $url = sprintf($base_url, 'db_project', 'api_cabinet');
+            $this->_pdo = new PDO($url, 'test', '344561');
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
