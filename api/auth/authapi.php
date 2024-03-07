@@ -1,5 +1,5 @@
 <?php
-include_once('../../v1/src/connectionBD.php');
+include_once('../Connexion.php');
 include_once('jwt_utils.php');
     $http_method = $_SERVER['REQUEST_METHOD'];
     $linkpdo=Connexion::getInstance();
