@@ -12,6 +12,21 @@ function generate_jwt($headers, $payload, $secret) {
 
 	return $jwt;
 }
+function decode_jwt($jwt, $secret) {
+	$tokenParts = explode('.', $jwt);
+	$header = base64_decode($tokenParts[0]);
+	$payload = base64_decode($tokenParts[1]);
+	$signature_provided = $tokenParts[2];
+
+	$signature = hash_hmac('SHA256', "$tokenParts[0].$tokenParts[1]", $secret, true);
+	$signature_encoded = base64url_encode($signature);
+
+	if ($signature_encoded === $signature_provided) {
+		return json_decode($payload);
+	} else {
+		return FALSE;
+	}
+}
 
 function is_jwt_valid($jwt, $secret) {
 	// split the jwt
