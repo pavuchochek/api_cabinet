@@ -6,7 +6,7 @@ $https_method=$_SERVER['REQUEST_METHOD'];
 
 $res=check_token();
 if(!$res){
-    deliver_response("Error",401,"Unauthorized");
+    deliver_response("Error",401,"Wrong token");
     exit;
 }
 switch($https_method){

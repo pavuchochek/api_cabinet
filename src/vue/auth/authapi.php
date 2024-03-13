@@ -55,7 +55,7 @@ include_once('jwt_utils.php');
                 return;
             }else{
                 $info_user=getInfoFromToken($token);
-                deliver_response("OK", 201, "Succes",$info_user);
+                deliver_response("OK", 200, "Succes",$info_user);
             }
 
     }
