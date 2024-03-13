@@ -88,11 +88,12 @@ switch($https_method){
         }
         break;
     case "DELETE":
-        $id=$_GET['id'];
-        if(!isset($id)){
+        if(!isset($_GET['id'])){
             deliver_response("Error",400,"Bad Request,id manquant");
             exit;
         }
+        $id=$_GET['id'];
+        
         $medecin=getMedecinById($id);
         if($medecin==null){
             deliver_response("Error",404,"Not Found, medecin inexistant");
