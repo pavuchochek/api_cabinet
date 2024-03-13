@@ -1,7 +1,6 @@
 <?php
 require('../../dao/dao.medecin.php');
 require('utils.php');
-include("../auth/jwt_utils.php");
 $https_method=$_SERVER['REQUEST_METHOD'];
 
 $res=check_token();
@@ -107,7 +106,7 @@ switch($https_method){
         }
         break;
     case "OPTIONS":
-        deliver_response("OK",200,"Succes",null,"Allow: GET,POST,PUT,DELETE,OPTIONS");
+        deliver_response("OK",200,"Succes",null,true);
         break;
 }
 function checkParamPatch($data){
