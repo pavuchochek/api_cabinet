@@ -20,7 +20,7 @@ function getMedecins(){
         $linkpdo=null;
         return $medecins;
     }catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function getMedecinById($id){
@@ -45,7 +45,7 @@ function getMedecinById($id){
             return null;
         }
     }catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function addMedecin($medecin){
@@ -64,7 +64,7 @@ function addMedecin($medecin){
         $data=getMedecinById($id);
         return $data;
     }catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function deleteMedecin($id){
@@ -77,7 +77,7 @@ function deleteMedecin($id){
         $linkpdo=null;
         return true;
     }catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function updateMedecin($medecin){
@@ -94,7 +94,7 @@ function updateMedecin($medecin){
         $medecin=getMedecinById($medecin['id']);
         return $medecin;
     }catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function getMedecinByNom($nom){
@@ -118,7 +118,7 @@ function getMedecinByNom($nom){
         $linkpdo=null;
         return $medecins;
     }catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 ?>

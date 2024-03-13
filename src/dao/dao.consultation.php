@@ -23,7 +23,7 @@ function getConsultations(){
         return $consultations;
     }
     catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function getConsultationById($id){
@@ -51,7 +51,7 @@ function getConsultationById($id){
         }
     }
     catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function addConsultation($consultation){
@@ -59,9 +59,9 @@ function addConsultation($consultation){
         $linkpdo=Connexion::getInstance();
         $query="INSERT INTO consultation(date_consult,heure_consult,duree_consult,id_medecin,id_usager) VALUES(:date,:heure,:duree,:id_medecin,:id_usager)";
         $stmt=$linkpdo->prepare($query);
-        $stmt->bindParam(':date',$consultation['date']);
-        $stmt->bindParam(':heure',$consultation['heure']);
-        $stmt->bindParam(':duree',$consultation['duree']);
+        $stmt->bindParam(':date',$consultation['date_consult']);
+        $stmt->bindParam(':heure',$consultation['heure_consult']);
+        $stmt->bindParam(':duree',$consultation['duree_consult']);
         $stmt->bindParam(':id_medecin',$consultation['id_medecin']);
         $stmt->bindParam(':id_usager',$consultation['id_usager']);
         $stmt->execute();
@@ -70,7 +70,7 @@ function addConsultation($consultation){
         return $id;
     }
     catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function deleteConsultation($id){
@@ -84,7 +84,7 @@ function deleteConsultation($id){
         return true;
     }
     catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
 function updateConsultation($consultation){
@@ -93,9 +93,9 @@ function updateConsultation($consultation){
         $query="UPDATE consultation SET date_consult=:date,heure_consult=:heure,duree_consult=:duree,id_medecin=:id_medecin,id_usager=:id_usager WHERE id_consult=:id";
         $stmt=$linkpdo->prepare($query);
         $stmt->bindParam(':id',$consultation['id']);
-        $stmt->bindParam(':date',$consultation['date']);
-        $stmt->bindParam(':heure',$consultation['heure']);
-        $stmt->bindParam(':duree',$consultation['duree']);
+        $stmt->bindParam(':date',$consultation['date_consult']);
+        $stmt->bindParam(':heure',$consultation['heure_consult']);
+        $stmt->bindParam(':duree',$consultation['duree_consult']);
         $stmt->bindParam(':id_medecin',$consultation['id_medecin']);
         $stmt->bindParam(':id_usager',$consultation['id_usager']);
         $stmt->execute();
@@ -103,6 +103,6 @@ function updateConsultation($consultation){
         return true;
     }
     catch(PDOException $e){
-        return $e->getMessage();
+        return $e;
     }
 }
