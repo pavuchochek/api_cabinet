@@ -1,3 +1,11 @@
+CREATE TABLE medecin(
+   id_medecin INT AUTO_INCREMENT,
+   civilite VARCHAR(5) NOT NULL,
+   nom VARCHAR(50) NOT NULL,
+   prenom VARCHAR(50) NOT NULL,
+   CONSTRAINT PK_medecin PRIMARY KEY(id_medecin)
+);
+
 CREATE TABLE usager(
    id_usager INT AUTO_INCREMENT,
    civilite VARCHAR(50) NOT NULL,
@@ -10,16 +18,10 @@ CREATE TABLE usager(
    date_nais DATE NOT NULL,
    lieu_nais VARCHAR(50) NOT NULL,
    num_secu CHAR(15) NOT NULL,
+   id_medecin INT,
    CONSTRAINT PK_usager PRIMARY KEY(id_usager),
-   CONSTRAINT AK_usager UNIQUE(num_secu)
-);
-
-CREATE TABLE medecin(
-   id_medecin INT AUTO_INCREMENT,
-   civilite VARCHAR(5) NOT NULL,
-   nom VARCHAR(50) NOT NULL,
-   prenom VARCHAR(50) NOT NULL,
-   CONSTRAINT PK_medecin PRIMARY KEY(id_medecin)
+   CONSTRAINT AK_usager UNIQUE(num_secu),
+   CONSTRAINT FK_usager_medecin FOREIGN KEY(id_medecin) REFERENCES medecin(id_medecin)
 );
 
 CREATE TABLE consultation(
@@ -35,6 +37,7 @@ CREATE TABLE consultation(
    CONSTRAINT FK_consultation_medecin FOREIGN KEY(id_medecin) REFERENCES medecin(id_medecin),
    CONSTRAINT FK_consultation_usager FOREIGN KEY(id_usager) REFERENCES usager(id_usager)
 );
+
 
 INSERT INTO medecin (civilite, nom, prenom) VALUES
 ('M.', 'Dupont', 'Jean'),
