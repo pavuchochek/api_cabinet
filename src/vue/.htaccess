@@ -3,6 +3,15 @@
 
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
+    #Medecins
     RewriteRule ^v1/medecins/?$ v1/medecins.php [L]
     RewriteRule ^v1/medecins/([0-9]+)$ v1/medecins.php?id=$1 [L]
+    #Usagers
+    RewriteRule ^v1/usagers/?$ v1/usagers.php [L]
+    RewriteRule ^v1/usagers/([0-9]+)$ v1/usagers.php?id=$1 [L]
+    #Consultations
+    RewriteRule ^v1/consultations/?$ v1/consultations.php [L]
+    RewriteRule ^v1/consultations/([0-9]+)$ v1/consultations.php?id=$1 [L]
+    #Stats
+    RewriteRule ^v1/stats/medecins$ v1/stats/medecins.php[L]
 </IfModule>
