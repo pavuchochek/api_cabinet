@@ -3,10 +3,13 @@ require("__DIR__/../../auth/jwt_utils.php");
 function deliver_response($status,$status_code, $status_message, $data=null,$options=null){
     /// Paramétrage de l'entête HTTP
     http_response_code($status_code); //Utilise un message standardisé en
-    header("Access-Control-Allow-Methods: DELETE, POST, GET, OPTIONS, PATCH");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Credentials: true");
+    if($options){
+        header("Access-Control-Allow-Methods: DELETE, POST, GET, OPTIONS, PATCH");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: true");
+    }
+    
 
     header("HTTP/1.1 $status_code $status_message"); 
     header("Content-Type:application/json; charset=utf-8");

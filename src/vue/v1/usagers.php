@@ -68,7 +68,7 @@ switch($https_method){
         }
         break;
     case "OPTIONS":
-        deliver_response("OK",200,"Succes",null,true);
+        deliver_response("OK",204,"Succes",null,true);
         break;
     }
 function check_usager_post($usager){
