@@ -2,7 +2,10 @@
 require('../../dao/dao.medecin.php');
 require('utils.php');
 $https_method=$_SERVER['REQUEST_METHOD'];
-
+header("Access-Control-Allow-Methods: DELETE, POST, GET, OPTIONS, PATCH");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Origin: *");
 $res=check_token();
 if(!$res){
     deliver_response("Error",401,"Wrong token");
@@ -106,10 +109,7 @@ switch($https_method){
         }
         break;
     case "OPTIONS":
-        header("Access-Control-Allow-Methods: DELETE, POST, GET, OPTIONS, PATCH");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Origin: *");
+        
         deliver_response("OK",204,"CORS authorized");
         break;
 }
