@@ -106,7 +106,11 @@ switch($https_method){
         }
         break;
     case "OPTIONS":
-        deliver_response("OK",204,"CORS authorized",null,true);
+        header("Access-Control-Allow-Methods: DELETE, POST, GET, OPTIONS, PATCH");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+        header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Origin: *");
+        deliver_response("OK",204,"CORS authorized");
         break;
 }
 function checkParamPatch($data){
