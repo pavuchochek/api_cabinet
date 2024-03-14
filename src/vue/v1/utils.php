@@ -7,6 +7,7 @@ function deliver_response($status,$status_code, $status_message, $data=null,$opt
         header("Access-Control-Allow-Methods: DELETE, POST, GET, OPTIONS, PATCH");
         header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
         header("Access-Control-Allow-Credentials: true");
+        http_response_code(200);
     }
     header("Access-Control-Allow-Origin: *");
     header("HTTP/1.1 $status_code $status_message"); 
