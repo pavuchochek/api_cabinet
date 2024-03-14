@@ -13,5 +13,6 @@
     RewriteRule ^v1/consultations/?$ v1/consultations.php [L]
     RewriteRule ^v1/consultations/([0-9]+)$ v1/consultations.php?id=$1 [L]
     #Stats
-    RewriteRule ^v1/stats/medecins$ v1/stats/medecins.php[L]
+    RewriteRule ^/stats/medecins$ v1/stats/medecins.php[L]
+    RewriteRule ^/stats/usagers$ v1/stats/usagers.php[L]
 </IfModule>

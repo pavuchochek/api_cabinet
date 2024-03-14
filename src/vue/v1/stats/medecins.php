@@ -9,7 +9,7 @@ if(!$res){
 }
 switch($https_method){
     case "GET":
-        $stats=getStats();
+        $stats=getStatsMedecins();
         if($stats instanceof PDOException){
             deliver_response("Error SQL",403,"Erreur lors de la récupération des statistiques",$stats->getMessage());
         }else{
