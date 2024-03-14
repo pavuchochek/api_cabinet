@@ -1,13 +1,12 @@
 <?php
-require("../../auth/jwt_utils.php");
+require("__DIR__/../../auth/jwt_utils.php");
 function deliver_response($status,$status_code, $status_message, $data=null,$options=null){
     /// Paramétrage de l'entête HTTP
     http_response_code($status_code); //Utilise un message standardisé en
     header("Access-Control-Allow-Methods: *");
     header("Access-Control-Allow-Headers: *");
-    if($options===true){
-        header("Access-Control-Allow-Origin: *");
-    }
+    header("Access-Control-Allow-Origin: *");
+    
     header("HTTP/1.1 $status_code $status_message"); 
     header("Content-Type:application/json; charset=utf-8");
     $response['status']=$status;
@@ -24,7 +23,7 @@ function deliver_response($status,$status_code, $status_message, $data=null,$opt
     echo $json_response;
     }
 function check_token(){
-    $env = parse_ini_file('../../.env.url');
+    $env = parse_ini_file('__DIR__/../../.env.url');
     $url_auth = $env["URL_AUTH"];
     $curl_h = curl_init($url_auth);
     $token=get_bearer_token();
