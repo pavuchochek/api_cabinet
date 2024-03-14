@@ -30,19 +30,31 @@ function getStatsUsagers()
 {
     try {
         $linkpdo = Connexion::getInstance();
-        $query = "SELECT 
-        CONCAT(usager.nom, ' ', usager.prenom) AS usager_nom_prenom,
-        COUNT(consultation.id_usager) AS nb_consultations FROM usager JOIN consultation ON usager.id_usager = consultation.id_usager
-        WHERE consultation.date_consult <= CURDATE() -- Filtre par rapport à la date actuelle 
-        GROUP BY usager.nom, usager.prenom;";
+        $query = "SELECT
+        genre,
+        SUM(CASE WHEN age < 25 THEN 1 ELSE 0 END) AS moins_de_25_ans,
+        SUM(CASE WHEN age >= 25 AND age <= 50 THEN 1 ELSE 0 END) AS entre_25_et_50_ans,
+        SUM(CASE WHEN age > 50 THEN 1 ELSE 0 END) AS plus_de_50_ans
+    FROM (
+        SELECT
+            genre,
+            YEAR(CURRENT_DATE) - YEAR(date_naissance) - (DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(date_naissance, '%m%d')) AS age
+        FROM
+            usagers
+    ) AS age_utilisateurs
+    GROUP BY
+        genre;
+    ";
         $stmt = $linkpdo->prepare($query);
         $stmt->execute();
         $result = $stmt->fetchAll();
         $stats = array();
         foreach ($result as $row) {
             $stat = array(
-                "usager_nom_prenom" => $row['usager_nom_prenom'],
-                "nb_consultations" => $row['nb_consultations']
+                "genre" => $row['genre'],
+                "moins_de_25_ans" => $row['moins_de_25_ans'],
+                "entre_25_et_50_ans" => $row['entre_25_et_50_ans'],
+                "plus_de_50_ans" => $row['plus_de_50_ans']
             );
             array_push($stats, $stat);
         }
