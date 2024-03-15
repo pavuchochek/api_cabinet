@@ -17,6 +17,7 @@ switch($https_method){
         }
         break;
     case"OPTIONS":
+        
         deliver_response("OK",204,"Succes",null,true);
         break;
     default:

@@ -84,7 +84,11 @@ switch($https_method){
         }
         break;
     case "OPTIONS":
-        deliver_response("OK",204,"Succes",null,true);
+        header("Access-Control-Allow-Methods: *");
+        header("Access-Control-Allow-Headers:*");
+        header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Origin: *");
+        deliver_response("OK",204,"Succes",null);
         break;
     }
 

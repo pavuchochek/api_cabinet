@@ -1,15 +1,16 @@
 <?php
 require(__DIR__."/../auth/jwt_utils.php");
-function deliver_response($status,$status_code, $status_message, $data=null,$options=null){
+function deliver_response($status,$status_code, $status_message, $data=null, $options=null){
     /// Paramétrage de l'entête HTTP
-    http_response_code($status_code); //Utilise un message standardisé en
-    if($options===true){
-        header("Access-Control-Allow-Methods: DELETE, POST, GET, OPTIONS, PATCH");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-        header("Access-Control-Allow-Credentials: true");
-        http_response_code(200);
-    }
     header("Access-Control-Allow-Origin: *");
+    if($options){
+        header("Access-Control-Allow-Methods: *");
+        header("Access-Control-Allow-Headers:*");
+        header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Origin: *");
+    }
+    http_response_code($status_code); //Utilise un message standardisé en
+    
     header("HTTP/1.1 $status_code $status_message"); 
     header("Content-Type:application/json; charset=utf-8");
     $response['status']=$status;
@@ -26,7 +27,7 @@ function deliver_response($status,$status_code, $status_message, $data=null,$opt
     echo $json_response;
     }
 function check_token(){
-    $env = parse_ini_file(__DIR__.'/../.env.url');
+    $env = parse_ini_file(__DIR__.'/../../../.env.url');
     $url_auth = $env["URL_AUTH"];
     $curl_h = curl_init($url_auth);
     $token=get_bearer_token();
