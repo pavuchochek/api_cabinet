@@ -2,33 +2,37 @@
 require('../../dao/dao.medecin.php');
 require('utils.php');
 $https_method=$_SERVER['REQUEST_METHOD'];
+// CORS
 if($https_method=="OPTIONS"){
     deliver_response("OK",204,"CORS authorized",null,true);
     exit;
 }
+// Vérification du token
 $res=check_token();
 if(!$res){
     deliver_response("Error",401,"Wrong token");
     exit;
 }
+// Gestion des requêtes
 switch($https_method){
+    // Récupération de la liste des medecins
     case "GET":
         if(isset($_GET['id'])){
             $id=$_GET['id'];
+            verificationMedecinNonExistant($id);
             $medecin=getMedecinById($id);
-            if($medecin!=null){
-                deliver_response("OK",200,"Succes",$medecin);
-            }else{
-                deliver_response("Error",404,"Not Found");
-            }
+            deliver_response("OK",200,"Succes, voici le medecin avec l'id ".$id,$medecin);
         }else{
             $medecins=getMedecins();
-            deliver_response("OK",200,"Succes",$medecins);
+            deliver_response("OK",200,"Succes, voici tout les medecins",$medecins);
         }
         break;
+    // Création d'un medecin
     case "POST":
+        // Récupération des données
         $postedData = file_get_contents('php://input');
         $data = json_decode($postedData,true);
+        // Vérification des données
         if(!isset($data['nom']) || !isset($data['prenom']) || !isset($data['civilite'])){
             deliver_response("Error",400,"Bad Request");
             exit;
@@ -38,83 +42,62 @@ switch($https_method){
             "prenom"=>$data['prenom'],
             "civilite"=>$data['civilite']
         );
+        // Ajout de l'usager
         $medecin=addMedecin($medecin);
-        if($medecin){
-            deliver_response("OK",201,"Created",$medecin);
-        }else{
-            deliver_response("Error SQL",403,"Le medecin n'a pas été ajouté");
-        }
+        //gestion des erreurs SQL
+        gestionErreurSQL($medecin);
+        deliver_response("OK",201,"Created",$medecin);
         break;
-    case "PUT":
-        $data=json_decode(file_get_contents('php://input'),true);
-        if(!isset($data['id']) || !isset($data['nom']) || !isset($data['prenom']) || !isset($data['civilite'])){
-            deliver_response("Error",400,"Bad Request");
-            exit;
-        }
-        $medecin=array(
-            "id"=>$data['id'],
-            "nom"=>$data['nom'],
-            "prenom"=>$data['prenom'],
-            "civilite"=>$data['civilite']
-        );
-        $id=updateMedecin($medecin);
-        if(is_numeric($id)){
-            $medecin=getMedecinById($id);
-            deliver_response("OK",200,"Succes",$medecin);
-        }else{
-            deliver_response("Error",400,"Bad Request");
-        }
-        break;
+    // Modification d'un medecin
     case "PATCH":
-        $id=$_GET['id'];
-        $postedData = file_get_contents('php://input');
-        $data = json_decode($postedData,true);
-        if (!isset($id)){
-            deliver_response("Error",400,"Bad Request, id manquant");
-            exit;
-        }
-        $medecin=getMedecinById($id);
-        if($medecin==null){
-            deliver_response("Error",404,"Not Found, medecin inexistant");
-            exit;
-        }
-        if(!checkParamPatch($data)){
-            deliver_response("Error",400,"Bad Request, arguments manquants");
-            exit;
-        }
-        $medecin=constructAndUpdate($data,$id);
-        if($medecin){
-            deliver_response("OK",200,"Succes, medecin modifié",$medecin);
-        }else{
-            deliver_response("Error",400,"Bad Request,medecin n'a pas pu être modifié".$medecin);
-        }
-        break;
-    case "DELETE":
         if(!isset($_GET['id'])){
             deliver_response("Error",400,"Bad Request,id manquant");
             exit;
         }
         $id=$_GET['id'];
-        
-        $medecin=getMedecinById($id);
-        if($medecin==null){
-            deliver_response("Error",404,"Not Found, medecin inexistant");
+        // Récupération des données
+        $postedData = file_get_contents('php://input');
+        $data = json_decode($postedData,true);
+        // Vérification des données
+        verificationMedecinNonExistant($id);
+        if(!checkParamPatch($data)){
+            deliver_response("Error",400,"Bad Request, arguments manquants");
             exit;
         }
-        $result=deleteMedecin($id);
-        if($result){
-            deliver_response("OK",200,"Succes");
-        }else{
-            deliver_response("Error",400,"Bad Request");
+        // Mise à jour de l'usager
+        $medecin=constructAndUpdate($data,$id);
+        //gestion des erreurs SQL
+        gestionErreurSQL($medecin);
+        // Retour de la réponse
+        deliver_response("OK",200,"Succes, medecin modifié",$medecin);
+        break;
+    case "DELETE":
+        // Récupération des données
+        if(!isset($_GET['id'])){
+            deliver_response("Error",400,"Bad Request,id manquant");
+            exit;
         }
+        $id=$_GET['id'];
+        // Vérification de l'existence de l'usager
+        verificationMedecinNonExistant($id);
+        // Suppression de l'usager
+        $result=deleteMedecin($id);
+        //gestion des erreurs SQL
+        gestionErreurSQL($result);
+        // Retour de la réponse
+        deliver_response("OK",200,"L'usager {$id} a été supprimé avec succès");
         break;
 }
+// Fonctions supplémentaires
+
+// Vérification des paramètres pour la modification
 function checkParamPatch($data){
     if(!isset($data['nom']) && !isset($data['prenom']) && !isset($data['civilite'])){
         return false;
     }
     return true;
 }
+// Construction et mise à jour de l'usager
 function constructAndUpdate($data,$id){
    $ancienMedecin=getMedecinById($id);
     if(isset($data['nom'])){
@@ -128,5 +111,12 @@ function constructAndUpdate($data,$id){
     }
     $medecin=updateMedecin($ancienMedecin);
     return $medecin;
+}
+function verificationMedecinNonExistant($id){
+    $medecin=getMedecinById($id);
+    if($medecin==null){
+        deliver_response("Error",404,"Non trouvé, medecin inexistant");
+        exit;
+    }
 }
 ?>

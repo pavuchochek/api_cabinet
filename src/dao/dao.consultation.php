@@ -23,7 +23,9 @@ function getConsultations(){
         return $consultations;
     }
     catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        return $result;
     }
 }
 function getConsultationById($id){
@@ -51,7 +53,9 @@ function getConsultationById($id){
         }
     }
     catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        return $result;
     }
 }
 function addConsultation($consultation){
@@ -70,7 +74,27 @@ function addConsultation($consultation){
         return $id;
     }
     catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        if($e->errorInfo[1]==1062){
+            $result["info"]="Erreur d'unicité, il y a déjà un rendez-vous à cette date et heure avec ce médecin";
+        }
+        if($e->errorInfo[1]==1452){
+            $result["info"]="Erreur de clé étrangère, le médecin ou l'usager n'existe pas";
+        }
+        if($e->errorInfo[1]==1406){
+            $result['info']="Erreur de longueur de champs";
+        }
+        if($e->errorInfo[1]==1366){
+            $result['info']="Erreur de type de champs";
+        }
+        if($e->errorInfo[1]==1292){
+            $result['info']="Erreur de format de date";
+        }
+        if($e->errorInfo[1]==1264){
+            $result['info']="Erreur de format d'heure";
+        }
+        return $result;
     }
 }
 function deleteConsultation($id){
@@ -84,7 +108,9 @@ function deleteConsultation($id){
         return true;
     }
     catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        return $result;
     }
 }
 function updateConsultation($consultation){
@@ -103,6 +129,26 @@ function updateConsultation($consultation){
         return true;
     }
     catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        if($e->errorInfo[1]==1062){
+            $result["info"]="Erreur d'unicité, il y a déjà un rendez-vous à cette date et heure avec ce médecin";
+        }
+        if($e->errorInfo[1]==1452){
+            $result["info"]="Erreur de clé étrangère, le médecin ou l'usager n'existe pas";
+        }
+        if($e->errorInfo[1]==1406){
+            $result['info']="Erreur de longueur de champs";
+        }
+        if($e->errorInfo[1]==1366){
+            $result['info']="Erreur de type de champs";
+        }
+        if($e->errorInfo[1]==1292){
+            $result['info']="Erreur de format de date";
+        }
+        if($e->errorInfo[1]==1264){
+            $result['info']="Erreur de format d'heure";
+        }
+        return $result;
     }
 }

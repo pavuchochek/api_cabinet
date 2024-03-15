@@ -30,6 +30,7 @@ function getUsagers(){
     catch(PDOException $e){
         $res=Array();
         $res['error']=$e->errorInfo[1];
+        $res['info']="Erreur SQL, contactez l'administrateur";
         return $res;
     }
 }
@@ -64,12 +65,19 @@ function getUsagerById($id){
     }catch(PDOException $e){
         $res=Array();
         $res['error']=$e->errorInfo[1];
+        $res['info']="Erreur SQL, contactez l'administrateur";
         return $res;
     }
 }
 function deleteUsager($id){
     try{
         $linkpdo=Connexion::getInstance();
+        //Suppression des consultations liées à l'usager
+        $query="DELETE FROM consultation WHERE id_usager=:id";
+        $stmt=$linkpdo->prepare($query);
+        $stmt->bindParam(':id',$id);
+        $stmt->execute();
+        // Suppression de l'usager
         $query="DELETE FROM usager WHERE id_usager=:id";
         $stmt=$linkpdo->prepare($query);
         $stmt->bindParam(':id',$id);
@@ -78,15 +86,8 @@ function deleteUsager($id){
         return true;
     }catch(PDOException $e){
         $res["error"]=$e->errorInfo[1];
-        if($e->errorInfo[1]==1451){
-            $res['info']="Erreur de contrainte d'intégrité";
-            return $res;
-        }
-        if($e->errorInfo[1]==1062){
-            $res['info']="Erreur d'unicité, l'usager est lié à une consultation";
-            return $res;
-        }
-        return $e->getMessage();
+        $res["info"]="Erreur SQL, contactez l'administrateur";
+        return $res;
     }
 }
 function addUsager($usager){
@@ -112,18 +113,17 @@ function addUsager($usager){
     }catch(PDOException $e){
         $res=Array();
         $res['error']=$e->errorInfo[1];
+        $res['info']="Erreur SQL, contactez l'administrateur";
         if($e->errorInfo[1]==1062){
             $res['info']="Erreur d'unicité, l'usager existe déjà";
-            return $res;
         }
         if($e->errorInfo[1]==1406){
             $res['info']="Erreur de longueur de champs";
-            return $res;
         }
         if($e->errorInfo[1]==1366){
             $res['info']="Erreur de type de champs";
-            return $res;
         }
+        return $res;
     }
 }
 function updateUsager($usager){
@@ -148,13 +148,13 @@ function updateUsager($usager){
         return $usagerModifie;
     }catch(PDOException $e){
         $res["error"]=$e->errorInfo[1];
+        $res["info"]="Erreur SQL, contactez l'administrateur";
         if($e->errorInfo[1]==1406){
             $res['info']="Erreur de longueur de champs";
-            return $res;
         }
         if($e->errorInfo[1]==1366){
             $res['info']="Erreur de type de champs";
-            return $res;
         }
+        return $res;
     }
 }

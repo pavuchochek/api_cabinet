@@ -20,7 +20,8 @@ function getMedecins(){
         $linkpdo=null;
         return $medecins;
     }catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1],"info"=>"Erreur SQL, contactez l'administrateur");
+        return $result;
     }
 }
 function getMedecinById($id){
@@ -45,7 +46,10 @@ function getMedecinById($id){
             return null;
         }
     }catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        return $result;
+
     }
 }
 function addMedecin($medecin){
@@ -64,12 +68,31 @@ function addMedecin($medecin){
         $data=getMedecinById($id);
         return $data;
     }catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        if($e->errorInfo[1]==1406){
+            $result['info']="Erreur de longueur de champs";
+        }
+        if($e->errorInfo[1]==1366){
+            $result['info']="Erreur de type de champs";
+        }
+        return $result;
     }
 }
 function deleteMedecin($id){
     try{
         $linkpdo=Connexion::getInstance();
+        //Suppression du medecin en tant que Medecin Referent
+        $query1="UPDATE usager SET id_medecin=NULL WHERE id_medecin=:id";
+        $stmt1=$linkpdo->prepare($query1);
+        $stmt1->bindParam(':id',$id);
+        $stmt1->execute();
+        //Suppression des consultations du medecin
+        $query2="DELETE FROM consultation WHERE id_medecin=:id";
+        $stmt2=$linkpdo->prepare($query2);
+        $stmt2->bindParam(':id',$id);
+        $stmt2->execute();
+        //Suppression du medecin
         $query="DELETE FROM medecin WHERE id_medecin=:id";
         $stmt=$linkpdo->prepare($query);
         $stmt->bindParam(':id',$id);
@@ -77,7 +100,9 @@ function deleteMedecin($id){
         $linkpdo=null;
         return true;
     }catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        return $result;
     }
 }
 function updateMedecin($medecin){
@@ -94,7 +119,15 @@ function updateMedecin($medecin){
         $medecin=getMedecinById($medecin['id']);
         return $medecin;
     }catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        if($e->errorInfo[1]==1406){
+            $result['info']="Erreur de longueur de champs";
+        }
+        if($e->errorInfo[1]==1366){
+            $result['info']="Erreur de type de champs";
+        }
+        return $result;
     }
 }
 function getMedecinByNom($nom){
@@ -118,7 +151,9 @@ function getMedecinByNom($nom){
         $linkpdo=null;
         return $medecins;
     }catch(PDOException $e){
-        return $e;
+        $result=array("error"=>$e->errorInfo[1]);
+        $result["info"]="Erreur SQL, contactez l'administrateur";
+        return $result;
     }
 }
 ?>
