@@ -59,6 +59,9 @@ function gestionErreurSQL($res){
     }
 }
 function convertDate($date){
-    $date = str_replace('/', '-', $date);
-    return date('Y-m-d', strtotime($date));
+    //type de date (jj/mm/aa)
+    $jour = substr($date, 0, 2);
+    $mois = substr($date, 3, 2);
+    $annee = substr($date, 6, 4);
+    return $annee."-".$mois."-".$jour;
 }
