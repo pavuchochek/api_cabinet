@@ -28,7 +28,9 @@ function getUsagers(){
         return $usagers;
     }
     catch(PDOException $e){
-        return $e->getMessage();
+        $res=Array();
+        $res['error']=$e->errorInfo[1];
+        return $res;
     }
 }
 function getUsagerById($id){
@@ -60,7 +62,9 @@ function getUsagerById($id){
             return null;
         }
     }catch(PDOException $e){
-        return $e->getMessage();
+        $res=Array();
+        $res['error']=$e->errorInfo[1];
+        return $res;
     }
 }
 function deleteUsager($id){
@@ -73,6 +77,15 @@ function deleteUsager($id){
         $linkpdo=null;
         return true;
     }catch(PDOException $e){
+        $res["error"]=$e->errorInfo[1];
+        if($e->errorInfo[1]==1451){
+            $res['info']="Erreur de contrainte d'intégrité";
+            return $res;
+        }
+        if($e->errorInfo[1]==1062){
+            $res['info']="Erreur d'unicité, l'usager est lié à une consultation";
+            return $res;
+        }
         return $e->getMessage();
     }
 }
@@ -97,7 +110,20 @@ function addUsager($usager){
         $linkpdo=null;
         return $usagerInsere;
     }catch(PDOException $e){
-        return $e->getMessage();
+        $res=Array();
+        $res['error']=$e->errorInfo[1];
+        if($e->errorInfo[1]==1062){
+            $res['info']="Erreur d'unicité, l'usager existe déjà";
+            return $res;
+        }
+        if($e->errorInfo[1]==1406){
+            $res['info']="Erreur de longueur de champs";
+            return $res;
+        }
+        if($e->errorInfo[1]==1366){
+            $res['info']="Erreur de type de champs";
+            return $res;
+        }
     }
 }
 function updateUsager($usager){
@@ -121,6 +147,14 @@ function updateUsager($usager){
         $linkpdo=null;
         return $usagerModifie;
     }catch(PDOException $e){
-        return $e->getMessage();
+        $res["error"]=$e->errorInfo[1];
+        if($e->errorInfo[1]==1406){
+            $res['info']="Erreur de longueur de champs";
+            return $res;
+        }
+        if($e->errorInfo[1]==1366){
+            $res['info']="Erreur de type de champs";
+            return $res;
+        }
     }
 }

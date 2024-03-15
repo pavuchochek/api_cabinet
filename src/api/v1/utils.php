@@ -52,3 +52,13 @@ function check_token(){
         return false;
     }
 }
+function gestionErreurSQL($res){
+    if(isset($res["error"])){
+        deliver_response("Erreur SQL",403,"Une erreur sql s'est produite",$res["error"]." ".$res["info"]);
+        exit;
+    }
+}
+function convertDate($date){
+    $date = str_replace('/', '-', $date);
+    return date('Y-m-d', strtotime($date));
+}
