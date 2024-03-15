@@ -2,6 +2,10 @@
 require('../../../dao/dao.stats.php');
 require('../utils.php');
 $https_method=$_SERVER['REQUEST_METHOD'];
+if($https_method=="OPTIONS"){
+    deliver_response("OK",204,"CORS authorized",null,true);
+    exit;
+}
 $res=check_token();
 if(!$res){
     deliver_response("Error",401,"Wrong token");
@@ -15,10 +19,6 @@ switch($https_method){
         }else{
             deliver_response("OK",200,"Succes",$stats);
         }
-        break;
-    case"OPTIONS":
-        
-        deliver_response("OK",204,"Succes",null,true);
         break;
     default:
         deliver_response("Error",405,"Method Not Allowed");

@@ -2,6 +2,10 @@
 require('../../dao/dao.usager.php');
 require('utils.php');
 $https_method=$_SERVER['REQUEST_METHOD'];
+if($https_method=="OPTIONS"){
+    deliver_response("OK",204,"CORS authorized",null,true);
+    exit;
+}
 $modele_usager=array("nom","prenom","civilite","adresse","code_postal","ville","date_nais","lieu_nais","num_secu","sexe");
 $res=check_token();
 if(!$res){
@@ -66,13 +70,6 @@ switch($https_method){
         }else{
             deliver_response("Error SQL",403,"L'usager n'a pas été supprimé");
         }
-        break;
-    case "OPTIONS":
-        header("Access-Control-Allow-Methods: *");
-        header("Access-Control-Allow-Headers:*");
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Origin: *");
-        deliver_response("OK",204,"Succes",null);
         break;
     }
 function check_usager_post($usager){

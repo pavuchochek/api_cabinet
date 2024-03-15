@@ -2,6 +2,10 @@
 require('../../../dao/dao.stats.php');
 require('../utils.php');
 $https_method=$_SERVER['REQUEST_METHOD'];
+if($https_method=="OPTIONS"){
+    deliver_response("OK",204,"CORS authorized",null,true);
+    exit;
+}
 $modele_consultation=array("id_medecin","id_usager","date_consult","heure_consult","duree_consult");
 $res=check_token();
 if(!$res){
@@ -16,13 +20,6 @@ switch($https_method){
         }else{
             deliver_response("OK",200,"Succes",$stats);
         }
-        break;
-    case"OPTIONS":
-        header("Access-Control-Allow-Methods: *");
-        header("Access-Control-Allow-Headers:*");
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Origin: *");
-        deliver_response("OK",204,"Succes",null);
         break;
     default:
         deliver_response("Error",405,"Method Not Allowed");
