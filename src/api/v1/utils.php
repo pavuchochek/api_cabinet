@@ -46,15 +46,20 @@ function check_token(){
     $response = curl_exec($curl_h);
     $httpcode = curl_getinfo($curl_h, CURLINFO_HTTP_CODE);
     curl_close($curl_h);
-    if($httpcode==200){
-        return true;
-    }else{
-        return false;
+    if($httpcode!=204){
+        deliver_response("Error",401,"Token incorrect");
+        exit;
     }
 }
 function gestionErreurSQL($res){
     if(isset($res["error"])){
-        deliver_response("Erreur SQL",403,"Une erreur sql s'est produite",$res["error"]." ".$res["info"]);
+        $statut="Error";
+        $code=500;
+        if($res["error"]==1062){
+            $statut="OK";
+            $code=200;
+        }
+        deliver_response($statut,$code,"SQL[{$res["error"]}] ".$res["info"]);
         exit;
     }
 }

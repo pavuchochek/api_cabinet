@@ -13,11 +13,7 @@ if($https_method=="OPTIONS"){
 $modele_usager=array("nom","prenom","civilite","adresse","code_postal","ville","date_nais","lieu_nais","num_secu","sexe");
 
 // Vérification du token
-$res=check_token();
-if(!$res){
-    deliver_response("Error",401,"Wrong token");
-    exit;
-}
+check_token();
 // Gestion des requêtes
 switch($https_method){
     // Récupération de la liste des usagers

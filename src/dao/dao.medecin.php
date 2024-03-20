@@ -13,7 +13,7 @@ function getMedecins(){
                 "id"=>$row['id_medecin'],
                 "nom"=>$row['nom'],
                 "prenom"=>$row['prenom'],
-                "specialite"=>$row['civilite']
+                "civilite"=>$row['civilite']
             );
             array_push($medecins,$medecin);
         }
@@ -144,7 +144,7 @@ function getMedecinByNom($nom){
                 "id"=>$row['id_medecin'],
                 "nom"=>$row['nom'],
                 "prenom"=>$row['prenom'],
-                "specialite"=>$row['civilite']
+                "civilite"=>$row['civilite']
             );
             array_push($medecins,$medecin);
         }

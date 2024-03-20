@@ -9,7 +9,7 @@ include_once('jwt_utils.php');
             $postedData = file_get_contents('php://input');
             $data = json_decode($postedData,true);
             if(!isset($data['login']) || !isset($data['mdp'])){
-                deliver_response("Error", 400,"Bad Request");
+                deliver_response("Error", 400,"Login or password manquants");
             }else{
                 $login = $data['login'];
                 $password = $data['mdp'];
@@ -39,7 +39,7 @@ include_once('jwt_utils.php');
                         //on genere le token
                         $jwt = generate_jwt($headers, $payload, $secret);
                         //et on l'envoi
-                        deliver_response("OK", 200, "Succes",$jwt);
+                        deliver_response("OK", 201, "Succes",$jwt);
                     }else{
                         deliver_response("Error", 401,"Unauthorized");
                     }
@@ -55,7 +55,7 @@ include_once('jwt_utils.php');
                 return;
             }else{
                 $info_user=getInfoFromToken($token);
-                deliver_response("OK", 200, "Succes",$info_user);
+                deliver_response("OK", 204, "Succes",$info_user);
             }
 
     }

@@ -23,7 +23,9 @@ function getStatsMedecins()
         $linkpdo = null;
         return $stats;
     } catch (PDOException $e) {
-        return $e;
+        $result = array("error" => $e->errorInfo[1]);
+        $result["info"] = "Erreur SQL, contactez l'administrateur";
+        return $result;
     }
 }
 function getStatsUsagers()
@@ -37,10 +39,10 @@ function getStatsUsagers()
         SUM(CASE WHEN age > 50 THEN 1 ELSE 0 END) AS plus_de_50_ans
     FROM (
         SELECT
-            genre,
-            YEAR(CURRENT_DATE) - YEAR(date_naissance) - (DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(date_naissance, '%m%d')) AS age
+            sexe AS genre,
+            YEAR(CURRENT_DATE) - YEAR(date_nais) - (DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(date_nais, '%m%d')) AS age
         FROM
-            usagers
+            usager
     ) AS age_utilisateurs
     GROUP BY
         genre;
@@ -61,6 +63,8 @@ function getStatsUsagers()
         $linkpdo = null;
         return $stats;
     } catch (PDOException $e) {
-        return $e;
+        $result = array("error" => $e->errorInfo[1]);
+        $result["info"] = "Erreur SQL, contactez l'administrateur";
+        return $result;
     }
 }
