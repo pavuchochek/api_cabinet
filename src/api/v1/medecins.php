@@ -1,6 +1,6 @@
 <?php
-require('../../dao/dao.medecin.php');
-require('utils.php');
+require_once(__DIR__.'/../../dao/dao.medecin.php');
+require_once(__DIR__.'/../../functions/utils.php');
 $https_method=$_SERVER['REQUEST_METHOD'];
 // CORS
 if($https_method=="OPTIONS"){
@@ -84,6 +84,9 @@ switch($https_method){
         // Retour de la réponse
         deliver_response("OK",200,"L'usager {$id} a été supprimé avec succès");
         break;
+    default:
+        deliver_response("Error",405,"Méthode non autorisée");
+        break;
 }
 // Fonctions supplémentaires
 
@@ -108,12 +111,5 @@ function constructAndUpdate($data,$id){
     }
     $medecin=updateMedecin($ancienMedecin);
     return $medecin;
-}
-function verificationMedecinNonExistant($id){
-    $medecin=getMedecinById($id);
-    if($medecin==null){
-        deliver_response("Error",404,"Non trouvé, medecin inexistant");
-        exit;
-    }
 }
 ?>

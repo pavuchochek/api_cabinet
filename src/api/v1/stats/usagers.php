@@ -1,6 +1,6 @@
 <?php
-require('../../../dao/dao.stats.php');
-require('../utils.php');
+require_once(__DIR__.'/../../../dao/dao.stats.php');
+require_once(__DIR__.'/../../../functions/utils.php');
 $https_method=$_SERVER['REQUEST_METHOD'];
 if($https_method=="OPTIONS"){
     deliver_response("OK",204,"CORS authorized",null,true);

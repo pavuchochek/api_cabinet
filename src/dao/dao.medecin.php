@@ -1,5 +1,5 @@
 <?php
-include('Connexion.php');
+require_once('Connexion.php');
 function getMedecins(){
     try{
         $linkpdo=Connexion::getInstance();

@@ -1,6 +1,6 @@
 <?php
-require('../../dao/dao.consultation.php');
-require('utils.php');
+require_once(__DIR__.'/../../dao/dao.consultation.php');
+require_once(__DIR__.'/../../functions/utils.php');
 $https_method = $_SERVER['REQUEST_METHOD'];
 // CORS
 if ($https_method == "OPTIONS") {
@@ -80,8 +80,10 @@ switch ($https_method) {
         gestionErreurSQL($res);
         deliver_response("OK", 200, "Succes, la consultation est supprimée");
         break;
+    default:
+        deliver_response("Error", 405, "Method Not Allowed");
+        break;
 }
-//Fonctions supplémentaires
 
 //Fonctions de vérification post
 function check_consultation_post($data)
@@ -92,6 +94,8 @@ function check_consultation_post($data)
             return false;
         }
     }
+    checkdateValid($data['date_consult']);
+    checkheureValid($data['heure_consult']);
     return true;
 }
 //Fonctions de construction de la consultation
@@ -112,9 +116,16 @@ function checkConsultationParamPatch($data)
     global $modele_consultation;
     foreach ($modele_consultation as $key) {
         if (isset($data[$key])) {
+            if ($key == "date_consult") {
+                checkdateValid($data['date_consult']);
+            }
+            if ($key == "heure_consult") {
+                checkheureValid($data['heure_consult']);
+            }
             return true;
         }
     }
+
     return false;
 }
 //Fonctions de construction de la consultation avec patch

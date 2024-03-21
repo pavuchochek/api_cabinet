@@ -1,5 +1,5 @@
 <?php
-include('Connexion.php');
+require_once('Connexion.php');
 function getUsagers(){
     try{
         $linkpdo=Connexion::getInstance();
@@ -20,7 +20,8 @@ function getUsagers(){
                 "ville"=>$row['ville'],
                 "date_nais"=>$row['date_nais'],
                 "lieu_nais"=>$row['lieu_nais'],
-                "num_secu"=>$row['num_secu']
+                "num_secu"=>$row['num_secu'],
+                "id_medecin"=>$row['id_medecin']
             );
             array_push($usagers,$usager);
         }
@@ -54,7 +55,8 @@ function getUsagerById($id){
                 "ville"=>$result['ville'],
                 "date_nais"=>$result['date_nais'],
                 "lieu_nais"=>$result['lieu_nais'],
-                "num_secu"=>$result['num_secu']
+                "num_secu"=>$result['num_secu'],
+                "id_medecin"=>$result['id_medecin']
             );
             $linkpdo=null;
             return $usager;
@@ -93,7 +95,7 @@ function deleteUsager($id){
 function addUsager($usager){
     try{
         $linkpdo=Connexion::getInstance();
-        $query="INSERT INTO usager(civilite,nom,prenom,sexe,adresse,code_postal,ville,date_nais,lieu_nais,num_secu) VALUES(:civilite,:nom,:prenom,:sexe,:adresse,:code_postal,:ville,:date_nais,:lieu_nais,:num_secu)";
+        $query="INSERT INTO usager(civilite,nom,prenom,sexe,adresse,code_postal,ville,date_nais,lieu_nais,num_secu,id_medecin) VALUES(:civilite,:nom,:prenom,:sexe,:adresse,:code_postal,:ville,:date_nais,:lieu_nais,:num_secu,:id_medecin)";
         $stmt=$linkpdo->prepare($query);
         $stmt->bindParam(':civilite',$usager['civilite']);
         $stmt->bindParam(':nom',$usager['nom']);
@@ -105,6 +107,7 @@ function addUsager($usager){
         $stmt->bindParam(':date_nais',$usager['date_nais']);
         $stmt->bindParam(':lieu_nais',$usager['lieu_nais']);
         $stmt->bindParam(':num_secu',$usager['num_secu']);
+        $stmt->bindParam(':id_medecin',$usager['id_medecin']);
         $stmt->execute();
         $id=$linkpdo->lastInsertId();
         $usagerInsere=getUsagerById($id);
@@ -129,7 +132,7 @@ function addUsager($usager){
 function updateUsager($usager){
     try{
         $linkpdo=Connexion::getInstance();
-        $query="UPDATE usager SET civilite=:civilite,nom=:nom,prenom=:prenom,sexe=:sexe,adresse=:adresse,code_postal=:code_postal,ville=:ville,date_nais=:date_nais,lieu_nais=:lieu_nais,num_secu=:num_secu WHERE id_usager=:id";
+        $query="UPDATE usager SET civilite=:civilite,nom=:nom,prenom=:prenom,sexe=:sexe,adresse=:adresse,code_postal=:code_postal,ville=:ville,date_nais=:date_nais,lieu_nais=:lieu_nais,num_secu=:num_secu,id_medecin=:id_medecin WHERE id_usager=:id";
         $stmt=$linkpdo->prepare($query);
         $stmt->bindParam(':id',$usager['id']);
         $stmt->bindParam(':civilite',$usager['civilite']);
@@ -142,18 +145,22 @@ function updateUsager($usager){
         $stmt->bindParam(':date_nais',$usager['date_nais']);
         $stmt->bindParam(':lieu_nais',$usager['lieu_nais']);
         $stmt->bindParam(':num_secu',$usager['num_secu']);
+        $stmt->bindParam(':id_medecin',$usager['id_medecin']);
         $stmt->execute();
         $usagerModifie=getUsagerById($usager['id']);
         $linkpdo=null;
         return $usagerModifie;
     }catch(PDOException $e){
         $res["error"]=$e->errorInfo[1];
-        $res["info"]="Erreur SQL, contactez l'administrateur";
+        $res["info"]=$e->errorInfo[2];
         if($e->errorInfo[1]==1406){
             $res['info']="Erreur de longueur de champs";
         }
         if($e->errorInfo[1]==1366){
             $res['info']="Erreur de type de champs";
+        }
+        if($e->errorInfo[1]==1292){
+            $res['info']= $e->errorInfo[2];
         }
         return $res;
     }

@@ -1,7 +1,7 @@
 <?php
-include_once('../../dao/ConnexionAuth.php');
+include_once(__DIR__.'/../../dao/ConnexionAuth.php');
 
-include_once('jwt_utils.php');
+include_once(__DIR__.'/../../functions/jwt_utils.php');
     $http_method = $_SERVER['REQUEST_METHOD'];
     $linkpdo=ConnexionAuth::getInstance();
     switch ($http_method){
@@ -50,6 +50,10 @@ include_once('jwt_utils.php');
             break;
         case "GET":
             $token=get_bearer_token();
+            if(!$token){
+                deliver_response("Error", 400,"Token manquant");
+                return;
+            }
             if(!is_jwt_valid($token,"secret")){
                 deliver_response("Error", 401,"Token exprired or invalid");
                 return;
@@ -57,6 +61,10 @@ include_once('jwt_utils.php');
                 $info_user=getInfoFromToken($token);
                 deliver_response("OK", 204, "Succes",$info_user);
             }
+            break;
+        default:
+            deliver_response("Error", 405,"Method Not Allowed");
+            break;
 
     }
     

@@ -1,5 +1,5 @@
 <?php
-require(__DIR__."/../auth/jwt_utils.php");
+require_once("jwt_utils.php");
 function deliver_response($status,$status_code, $status_message, $data=null, $options=null){
     /// Paramétrage de l'entête HTTP
     header("Access-Control-Allow-Origin: *");
@@ -27,7 +27,7 @@ function deliver_response($status,$status_code, $status_message, $data=null, $op
     echo $json_response;
     }
 function check_token(){
-    $env = parse_ini_file(__DIR__.'/../../../.env.url');
+    $env = parse_ini_file(__DIR__.'/../../.env.url');
     $url_auth = $env["URL_AUTH"];
     $curl_h = curl_init($url_auth);
     $token=get_bearer_token();
@@ -56,8 +56,8 @@ function gestionErreurSQL($res){
         $statut="Error";
         $code=500;
         if($res["error"]==1062){
-            $statut="OK";
-            $code=200;
+            $statut="Chevauchement de clé primaire";
+            $code=409;
         }
         deliver_response($statut,$code,"SQL[{$res["error"]}] ".$res["info"]);
         exit;
@@ -69,4 +69,65 @@ function convertDate($date){
     $mois = substr($date, 3, 2);
     $annee = substr($date, 6, 4);
     return $annee."-".$mois."-".$jour;
+}
+// Vérification de l'existence de l'usager
+function verifierUsagerNonExistant($id){
+    $usager=getUsagerById($id);
+    if(!isset($usager["id"])){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+function verificationMedecinNonExistant($id){
+    $medecin=getMedecinById($id);
+    if($medecin==null){
+        deliver_response("Error",404,"Non trouvé, medecin inexistant");
+        exit;
+    }
+}
+function checkdateValid($date){
+    // Séparer la date en jour, mois et année
+    $date_parts = explode("/", $date);
+
+    // Vérifier s'il y a trois parties (jour, mois, année)
+    if (count($date_parts) != 3) {
+        deliver_response("Error", 400, "Date invalide");
+        exit;
+    }
+
+    // Récupérer le jour, le mois et l'année
+    $day = intval($date_parts[0]);
+    $month = intval($date_parts[1]);
+    $year = intval($date_parts[2]);
+
+    // Vérifier si la date est valide avec checkdate
+    if (!checkdate($month, $day, $year)) {
+        deliver_response("Error", 400, "Date invalide");
+        exit;
+    }
+}
+function checkheureValid($heure){
+// Séparer l'heure en heures et minutes
+$heure_parts = explode(":", $heure);
+
+// Vérifier s'il y a deux parties (heures, minutes)
+if (count($heure_parts) != 2) {
+    deliver_response("Error", 400, "Heure invalide");
+    exit;
+}
+
+// Récupérer les heures et les minutes
+$hour = intval($heure_parts[0]);
+$minute = intval($heure_parts[1]);
+if (!ctype_digit($heure_parts[0]) || !ctype_digit($heure_parts[1])) {
+    deliver_response("Error", 400, "Heure invalide");
+    exit;
+}
+// Vérifier si les heures et les minutes sont valides
+if ($hour < 0 || $hour > 23 || $minute < 0 || $minute > 59) {
+    deliver_response("Error", 400, "Heure invalide");
+    exit;
+}
 }
