@@ -1,6 +1,7 @@
 <?php
-require('../../dao/dao.usager.php');
-require('utils.php');
+require_once(__DIR__.'/../../dao/dao.usager.php');
+require_once(__DIR__.'/../../dao/dao.medecin.php');
+require_once(__DIR__.'/../../functions/utils.php');
 
 $https_method=$_SERVER['REQUEST_METHOD'];
 
@@ -10,7 +11,7 @@ if($https_method=="OPTIONS"){
     exit;
 }
 // Modèle de données de l'usager
-$modele_usager=array("nom","prenom","civilite","adresse","code_postal","ville","date_nais","lieu_nais","num_secu","sexe");
+$modele_usager=array("nom","prenom","civilite","adresse","code_postal","ville","date_nais","lieu_nais","num_secu","sexe","id_medecin");
 
 // Vérification du token
 check_token();
@@ -95,6 +96,9 @@ switch($https_method){
         gestionErreurSQL($res);
         deliver_response("OK",200,"Succes");
         break;
+    default:
+        deliver_response("Error",405,"Méthode non autorisée");
+        break;
     }
 
 
@@ -104,9 +108,14 @@ switch($https_method){
 function check_usager_post($usager){
     global $modele_usager;
     foreach($modele_usager as $u){
-        if(!isset($usager[$u])){
+        if(!isset($usager[$u])&&$u!="id_medecin"){
             return false;
         }
+    }
+    $date=$usager["date_nais"];
+    checkdateValid($date);
+    if(isset($usager["id_medecin"])){
+        verificationMedecinNonExistant($usager["id_medecin"]);
     }
     return true;
 }
@@ -126,16 +135,27 @@ function constructUsagerPatch($id,$data){
     $usagerAncien=getUsagerById($id);
     foreach($modele_usager as $u){
         if(isset($data[$u])){
-            $usagerAncien[$u]=$data[$u];
+            if($u=="date_nais"){
+                $usagerAncien[$u]=convertDate($usagerAncien[$u]);
+            }else{
+                $usagerAncien[$u]=$data[$u];
+            }
+            
+            
         }
     }
-    $usagerAncien['date_nais']=convertDate($usagerAncien['date_nais']);
     return $usagerAncien;
     
 }
 // Vérification des données de l'usager pour la modification
 function checkUsagerParamPatch($data){
     global $modele_usager;
+    if(isset($data["id_medecin"])){
+        verificationMedecinNonExistant($data["id_medecin"]);
+    }
+    if(isset($data["date_nais"])){
+        checkdateValid($data["date_nais"]);
+    }
     foreach($modele_usager as $u){
         if(isset($data[$u])){
             return true;
@@ -143,12 +163,4 @@ function checkUsagerParamPatch($data){
     }
     return false;
 }
-// Vérification de l'existence de l'usager
-function verifierUsagerNonExistant($id){
-    $usager=getUsagerById($id);
-    if(!isset($usager["id"])){
-        return true;
-    }else{
-        return false;
-    }
-}
+
