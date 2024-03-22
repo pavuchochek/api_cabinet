@@ -113,9 +113,9 @@ function check_usager_post($usager){
         }
     }
     $date=$usager["date_nais"];
-    checkdateValid($date);
+    checkdateValidDateNaiss($date);
     if(isset($usager["id_medecin"])){
-        verificationMedecinNonExistant($usager["id_medecin"]);
+        verificationMedecinNonExistant($usager["id_medecin"],"Le medecin referent n'existe pas");
     }
     return true;
 }
@@ -151,10 +151,10 @@ function constructUsagerPatch($id,$data){
 function checkUsagerParamPatch($data){
     global $modele_usager;
     if(isset($data["id_medecin"])){
-        verificationMedecinNonExistant($data["id_medecin"]);
+        verificationMedecinNonExistant($data["id_medecin"],"Le medecin referent n'existe pas");
     }
     if(isset($data["date_nais"])){
-        checkdateValid($data["date_nais"]);
+        checkdateValidDateNaiss($data["date_nais"]);
     }
     foreach($modele_usager as $u){
         if(isset($data[$u])){

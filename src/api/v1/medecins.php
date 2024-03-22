@@ -16,7 +16,7 @@ switch($https_method){
     case "GET":
         if(isset($_GET['id'])){
             $id=$_GET['id'];
-            verificationMedecinNonExistant($id);
+            verificationMedecinNonExistant($id,"Medecin non trouvé");
             $medecin=getMedecinById($id);
             deliver_response("OK",200,"Succes, voici le medecin avec l'id ".$id,$medecin);
         }else{
@@ -31,7 +31,7 @@ switch($https_method){
         $data = json_decode($postedData,true);
         // Vérification des données
         if(!isset($data['nom']) || !isset($data['prenom']) || !isset($data['civilite'])){
-            deliver_response("Error",400,"Bad Request");
+            deliver_response("Error",400,"Arguments manquants");
             exit;
         }
         $medecin=array(
@@ -56,7 +56,7 @@ switch($https_method){
         $postedData = file_get_contents('php://input');
         $data = json_decode($postedData,true);
         // Vérification des données
-        verificationMedecinNonExistant($id);
+        verificationMedecinNonExistant($id,"Medecin non trouvé");
         if(!checkParamPatch($data)){
             deliver_response("Error",400,"Bad Request, arguments manquants");
             exit;
@@ -76,7 +76,7 @@ switch($https_method){
         }
         $id=$_GET['id'];
         // Vérification de l'existence de l'usager
-        verificationMedecinNonExistant($id);
+        verificationMedecinNonExistant($id,"Medecin non trouvé");
         // Suppression de l'usager
         $result=deleteMedecin($id);
         //gestion des erreurs SQL

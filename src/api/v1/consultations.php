@@ -94,14 +94,14 @@ function check_consultation_post($data)
             return false;
         }
     }
-    checkdateValid($data['date_consult']);
-    checkheureValid($data['heure_consult']);
+    checkdateetHeureRDv($data['heure_consult'],$data['date_consult']);
     return true;
 }
 //Fonctions de construction de la consultation
 function constructConsultationPost($data)
 {
     global $modele_consultation;
+    checkheureValid($data['heure_consult']);
     $consultation = array();
     foreach ($modele_consultation as $key) {
         $consultation[$key] = $data[$key];
@@ -116,12 +116,6 @@ function checkConsultationParamPatch($data)
     global $modele_consultation;
     foreach ($modele_consultation as $key) {
         if (isset($data[$key])) {
-            if ($key == "date_consult") {
-                checkdateValid($data['date_consult']);
-            }
-            if ($key == "heure_consult") {
-                checkheureValid($data['heure_consult']);
-            }
             return true;
         }
     }
@@ -138,6 +132,7 @@ function constructConsultationPatch($id, $data)
             $consultationAncienne[$key] = $data[$key];
         }
     }
+    checkdateetHeureRDv($data['heure_consult'],$data['date_consult']);
     $consultationAncienne['date_consult'] = convertDate($consultationAncienne['date_consult']);
     $consultationAncienne['heure_consult'] = convertTime($consultationAncienne['heure_consult']);
     return $consultationAncienne;

@@ -77,7 +77,7 @@ function addConsultation($consultation){
         $result=array("error"=>$e->errorInfo[1]);
         $result["info"]="Erreur SQL, contactez l'administrateur";
         if($e->errorInfo[1]==1062){
-            $result["info"]="Erreur d'unicité, il y a déjà un rendez-vous à cette date et heure avec ce médecin";
+            $result["info"]="Erreur d'unicité, il y a déjà un rendez-vous à cette date et heure avec ce médecin ou cet usager";
         }
         if($e->errorInfo[1]==1452){
             $result["info"]="Erreur de clé étrangère, le médecin ou l'usager n'existe pas";

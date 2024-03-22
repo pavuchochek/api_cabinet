@@ -118,7 +118,7 @@ function addUsager($usager){
         $res['error']=$e->errorInfo[1];
         $res['info']="Erreur SQL, contactez l'administrateur";
         if($e->errorInfo[1]==1062){
-            $res['info']="Erreur d'unicité, l'usager existe déjà";
+            $res['info']="Erreur d'unicité, ce numero de sécurité sociale est déjà attribué";
         }
         if($e->errorInfo[1]==1406){
             $res['info']="Erreur de longueur de champs";
@@ -152,15 +152,15 @@ function updateUsager($usager){
         return $usagerModifie;
     }catch(PDOException $e){
         $res["error"]=$e->errorInfo[1];
-        $res["info"]=$e->errorInfo[2];
+        $res["info"]="Veuillez contacter l'administrateur";
         if($e->errorInfo[1]==1406){
             $res['info']="Erreur de longueur de champs";
         }
         if($e->errorInfo[1]==1366){
             $res['info']="Erreur de type de champs";
         }
-        if($e->errorInfo[1]==1292){
-            $res['info']= $e->errorInfo[2];
+        if($e->errorInfo[1]==1062){
+            $res['info']="Erreur d'unicité, ce numero de sécurité sociale est déjà attribué";
         }
         return $res;
     }
