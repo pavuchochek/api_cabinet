@@ -27,6 +27,7 @@ function deliver_response($status, $status_code, $status_message, $data = null, 
     /// Affichage de la réponse (Retourné au client)
     echo $json_response;
 }
+
 function check_token()
 {
     $env = parse_ini_file(__DIR__ . '/../../.env.url');
@@ -55,6 +56,7 @@ function check_token()
         exit;
     }
 }
+
 function gestionErreurSQL($res)
 {
     if (isset($res["error"])) {
@@ -68,6 +70,7 @@ function gestionErreurSQL($res)
         exit;
     }
 }
+
 function convertDate($date)
 {
     //type de date (jj/mm/aa)
@@ -76,6 +79,7 @@ function convertDate($date)
     $annee = substr($date, 6, 4);
     return $annee . "-" . $mois . "-" . $jour;
 }
+
 // Vérification de l'existence de l'usager
 function verifierUsagerNonExistant($id)
 {
@@ -95,6 +99,7 @@ function verificationMedecinNonExistant($id, $message)
         exit;
     }
 }
+
 function checkdateValidDateNaiss($date)
 {
     // Séparer la date en jour, mois et année
@@ -172,20 +177,21 @@ function checkheureValid($heure)
         exit;
     }
 }
+
 function checkdateNaiss($month,$year,$day){
-    // Créer un objet de date pour la date fournie
-    $input_date = mktime(0,0,0, $month, $day, $year);
-
-    // Créer un objet de date pour la date actuelle
-    $current_date = mktime(date('H'),date('i'),date("m"), date("d"), date("Y"));
-
     // Comparer les dates
-    if ($input_date > $current_date) {
+    if ($year > date("Y") || $year == date("Y") && $month > date("m") || $year == date("Y") && $month == date("m") && $day > date("d")){
        deliver_response("Error", 400, "Date naissance invalide, on ne peut pas être né dans le futur");
        exit;
     }
     if($year<1820){
         deliver_response("Error", 400, "Date naissance invalide, on ne peut pas être né avant 1820");
+        exit;
+    }
+
+    // Vérifier si la date est valide avec checkdate
+    if (!checkdate($month, $day, $year)) {
+        deliver_response("Error", 400, "Date naissance invalide, mauvais format de date");
         exit;
     }
 }

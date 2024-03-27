@@ -165,3 +165,4 @@ function updateUsager($usager){
         return $res;
     }
 }
+?>

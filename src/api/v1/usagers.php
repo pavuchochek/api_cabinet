@@ -140,12 +140,9 @@ function constructUsagerPatch($id,$data){
             }else{
                 $usagerAncien[$u]=$data[$u];
             }
-            
-            
         }
     }
     return $usagerAncien;
-    
 }
 // Vérification des données de l'usager pour la modification
 function checkUsagerParamPatch($data){
